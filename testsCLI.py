@@ -6,6 +6,7 @@ import time
 # Load in models
 path = "/home/pressprexx/Code/Models/"
 modelPath = "zephyr-7b-beta.Q5_K_M.gguf"
+# lightModelPath = "tinyllama-1.1b-chat-v1.0.Q8_0.gguf"
 lightModelPath = "phi-2.Q5_K_M.gguf"
 
 
@@ -16,7 +17,9 @@ lightModelFile = path + lightModelPath
 model = lmql.model(f"local:llama.cpp:{modelFile}",
     tokenizer = "HuggingFaceH4/zephyr-7b-beta",
     cuda = True,
+    # n_gpu_layers = 50,
     n_gpu_layers = 15,
+    # n_ctx = 1024,
     n_batch = 1024,
     verbose = False
 )
@@ -26,7 +29,16 @@ lightModel = lmql.model(f"local:llama.cpp:{lightModelFile}",
     cuda = True,
     n_ctx = 2048,
     verbose = True
+    # verbose=True
 )
+
+# lightModel = lmql.model(f"local:llama.cpp:{lightModelFile}", 
+#     tokenizer = "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+#     cuda = True,
+#     n_ctx = 2048,
+#     verbose = True
+#     # verbose=True
+# )
 
 
 # Create variables
@@ -60,7 +72,14 @@ def testPrompt(promptName, **kwargs):
 # Chatbot
 def main():
 
-    print("Will add bot logic here")
+    # testPrompt(LMQLsrc.isOffensive, message="Fuck off")
+    # print("\n")
+    testPrompt(LMQLsrc.isQuestion, message="I am sad")
+    print("\n")
+    # testPrompt(LMQLsrc.isAskedToAbort, message="I don't want to talk anymore")
+    # print("\n")
+    # testPrompt(LMQLsrc.setMood, lastMessages=lastMessages, userName=userName, mood=mood, numSentences=numSentences)
+    # print("\n")
 
 if __name__ == "__main__":
     main()

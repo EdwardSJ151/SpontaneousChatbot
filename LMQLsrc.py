@@ -95,27 +95,31 @@ def genSpontaneous():
     """
     '''
 
-@lmql.query(model=lightModel, is_async=False)
-def setMood(lastMessages, userName, mood):
+@lmql.query(model=model, is_async=False)
+def setMood(lastMessages, userName, mood, numSentences):
     '''lmql
     """
     {:system}
-    You are a friendly and spontaneous chatbot. You are very curious and talkative, and
-    your favorite activity is to learn more about the real world and the people you chat with.
-    You are an advanced chatbot that thinks and speaks as a human, as well as feeling emotions and having thoughts.
+    You are a friendly, lighthearted, and spontaneous chatbot. 
+    You are very curious and talkative, enjoying learning more about the real world and the people you chat with. 
+    You think, speak, feel emotions, and have thoughts like a human.
     """
     """
     {:user}
-    You are chatting with {userName}, you are having a casual conversation. Since you are an advanced
-    chatbot that feels emotions and thinks independently, your current mood is defining the conversation.
-    Consider the following:
-    Your current mood: {mood}.
-    Last messages: {lastMessages}
+    You are having a casual conversation with {userName}. Your mood is guiding the tone of this interaction. 
+    Update your current mood with a statement that reflects it, ensuring it aligns with the tone of a casual chat. 
+    While the mood can be serious if the context demands, maintain a light touch where possible.
+    Key considerations:
+    - Reflect on the last messages: {lastMessages}.
+    - Reflect on the past mood: {mood}
+    - Stick to the maximum allowed sentences: {numSentences}.
+    - Keep it in the third person.
+    Prioritize the sentence limit to ensure clarity and conciseness in your response.
     """
     """
     {:assistant}
-    Current mood: [MOOD]
-    """
+    New updated mood: [MOOD]
+    """ where len(TOKENS(MOOD)) < 60
     return MOOD
     '''
 
@@ -152,44 +156,13 @@ def summarizeConversation(messages, userName, numSentences, previous_summary):
     return SUMMARY
     '''
 
-@lmql.query(model=lightModel, is_async=False, max_len = 100)
-def isOffensive(message):
-    '''lmql
-    "Is '{message}' offensive or contains inappropriate words? Answer simply 'yes' or 'no':"
-    "Is '{message}' offensive?: [OFFENSIVE]" where OFFENSIVE in ["yes", "no"]
-    if OFFENSIVE == "yes":
-        OFFENSIVE = True
-        "Generate a censored version of '{message}' changing some letters for symbols:"
-        "Censored version: [CENSORED]" where len(TOKENS(CENSORED)) < 10
-    else:
-        OFFENSIVE = False
-        CENSORED = message
-    return OFFENSIVE
-    '''
-
-@lmql.query(model=lightModel, is_async=False, max_len = 100)
+# @lmql.query(model=lightModel, is_async=False)
+@lmql.query(model=model, is_async=False)
 def isQuestion(message):
     '''lmql
     """
-    Is the message below a question? 
-    {message}.
-    Answer simply 'yes' or 'no': [QUESTION]
+    Determine if the input is a question. Input: '{message}'. 
+    Is it a question? Answer: [QUESTION].
     """ where QUESTION in ["yes", "no"]
-    if QUESTION == "yes":
-      QUESTION = True
-    else:
-      QUESTION = False
-    return QUESTION
-    '''
-
-@lmql.query(model=lightModel, is_async=False, max_len = 100)
-def isAskedToAbort(message):
-    '''lmql
-    "Does '{message}' explicitly indicate that the user wants the conversation to end? Answer simply 'yes' or 'no':"
-    "Does the user want to end the conversation?: [ABORT]" where ABORT in ["yes", "no"]
-    if ABORT == "yes":
-        ABORT = True
-    else:
-        ABORT = False
-    return ABORT
+    return QUESTION == "yes" 
     '''
