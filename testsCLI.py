@@ -72,7 +72,7 @@ def testPrompt(promptName, **kwargs):
 # Chatbot
 def main():
 
-    # testPrompt(LMQLsrc.isOffensive, message="Fuck off")
+    # testPrompt(LMQLsrc.isOffensive, message="Damn it")
     # print("\n")
     testPrompt(LMQLsrc.isQuestion, message="I am sad")
     print("\n")
